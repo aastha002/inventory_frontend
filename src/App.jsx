@@ -17,34 +17,51 @@ function App() {
   });
   const [amounts, setAmounts] = useState({});
 
+  // Fetch products from the server
   const fetchProducts = async () => {
     try {
       const res = await getProducts();
-      setProducts(res.data); // update state with the fetched products
+      setProducts(res.data); // Update state with the fetched products
     } catch (error) {
       console.error("Error fetching products", error);
     }
   };
 
   useEffect(() => {
-    fetchProducts(); // Fetch products on component mount
+    fetchProducts(); // Fetch products when the component mounts
   }, []);
 
+  // Handle input field changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle amount changes for purchase and sell
   const handleAmountChange = (id, value) => {
     setAmounts({ ...amounts, [id]: value });
   };
 
+  // Add new product to the database
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    await addProduct(formData); // Add new product
-    fetchProducts(); // Refresh product list
-    setFormData({ name: "", quantity: 0, price: 0, description: "" });
+
+    if (!formData.name || formData.quantity <= 0 || formData.price <= 0) {
+      alert("Please fill in all the fields correctly.");
+      return;
+    }
+
+    try {
+      // Add product using the service
+      const newProduct = await addProduct(formData);
+      setProducts([...products, newProduct]); // Add the new product to the state
+      setFormData({ name: "", quantity: 0, price: 0, description: "" }); // Clear the form after adding
+    } catch (error) {
+      console.error("Error adding product", error);
+      alert("There was an issue adding the product.");
+    }
   };
 
+  // Handle product purchase
   const handlePurchase = async (id) => {
     const amount = parseInt(amounts[id]);
     if (!isNaN(amount) && amount > 0) {
@@ -54,6 +71,7 @@ function App() {
     }
   };
 
+  // Handle product sale
   const handleSell = async (id) => {
     const amount = parseInt(amounts[id]);
     if (!isNaN(amount) && amount > 0) {
