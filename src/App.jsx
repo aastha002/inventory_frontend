@@ -17,31 +17,27 @@ function App() {
   });
   const [amounts, setAmounts] = useState({});
 
-  // Fetch products from the server
   const fetchProducts = async () => {
     try {
       const res = await getProducts();
-      setProducts(res.data); // Update state with the fetched products
+      setProducts(res.data); 
     } catch (error) {
       console.error("Error fetching products", error);
     }
   };
 
   useEffect(() => {
-    fetchProducts(); // Fetch products when the component mounts
+    fetchProducts(); 
   }, []);
 
-  // Handle input field changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle amount changes for purchase and sell
   const handleAmountChange = (id, value) => {
     setAmounts({ ...amounts, [id]: value });
   };
 
-  // Add new product to the database
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
@@ -51,17 +47,15 @@ function App() {
     }
 
     try {
-      // Add product using the service
       const newProduct = await addProduct(formData);
-      setProducts([...products, newProduct]); // Add the new product to the state
-      setFormData({ name: "", quantity: 0, price: 0, description: "" }); // Clear the form after adding
+      setProducts([...products, newProduct]); 
+      setFormData({ name: "", quantity: 0, price: 0, description: "" }); 
     } catch (error) {
       console.error("Error adding product", error);
       alert("There was an issue adding the product.");
     }
   };
 
-  // Handle product purchase
   const handlePurchase = async (id) => {
     const amount = parseInt(amounts[id]);
     if (!isNaN(amount) && amount > 0) {
@@ -71,7 +65,6 @@ function App() {
     }
   };
 
-  // Handle product sale
   const handleSell = async (id) => {
     const amount = parseInt(amounts[id]);
     if (!isNaN(amount) && amount > 0) {
@@ -87,7 +80,6 @@ function App() {
         Inventory Management
       </h1>
 
-      {/* Add Product Form */}
       <form
         className="bg-gray-100 p-4 rounded mb-8"
         onSubmit={handleAddProduct}
@@ -137,7 +129,6 @@ function App() {
         </div>
       </form>
 
-      {/* Product List */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {products.map((product) => (
           <ProductCard
